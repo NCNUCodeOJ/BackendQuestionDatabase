@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"testing"
 
 	"github.com/NCNUCodeOJ/BackendQuestionDatabase/models"
@@ -49,4 +50,11 @@ func TestProblemCreate(t *testing.T) {
 	req.Header.Set("Authorization", token)
 	r.ServeHTTP(w, req)
 	assert.Equal(t, http.StatusOK, w.Code)
+}
+
+func TestCleanup(t *testing.T) {
+	e := os.Remove("test.db")
+	if e != nil {
+		t.Fail()
+	}
 }
