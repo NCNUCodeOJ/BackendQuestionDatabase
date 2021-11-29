@@ -14,6 +14,7 @@ import (
 
 	"github.com/NCNUCodeOJ/BackendQuestionDatabase/judgeservice"
 	"github.com/NCNUCodeOJ/BackendQuestionDatabase/models"
+	"github.com/NCNUCodeOJ/BackendQuestionDatabase/styleservice"
 	"github.com/gin-gonic/gin"
 	"github.com/vincentinttsh/replace"
 	"github.com/vincentinttsh/zero"
@@ -131,6 +132,62 @@ func GetProblemByID(c *gin.Context) {
 	})
 
 	return
+}
+
+// GetSubmissionByID 讀取提交
+func GetSubmissionByID(c *gin.Context) {
+	var err error
+	var submission models.SubmissionStatus
+	var submissionID uint
+	var wrong = make([]gin.H, 0)
+	var testcase = make([]gin.H, 0)
+
+	if ID, err := strconv.Atoi(c.Params.ByName("id")); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "系統錯誤",
+		})
+	} else {
+		submissionID = uint(ID)
+	}
+
+	if submission, err = models.GetSubmissionByID(submissionID); err != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"message": "無此提交",
+		})
+		return
+	}
+
+	for _, w := range submission.Wrong {
+		wrong = append(wrong, gin.H{
+			"line":        w.Line,
+			"col":         w.Col,
+			"rule":        w.Rule,
+			"description": w.Description,
+		})
+	}
+
+	for _, t := range submission.TestCase {
+		testcase = append(testcase, gin.H{
+			"cpu_time":  t.CPUTime,
+			"memory":    t.Memory,
+			"status":    t.Status,
+			"test_case": t.TestCaseNumber,
+		})
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"submission_id": submission.SubmissionID,
+		"problem_id":    submission.ProblemID,
+		"author":        submission.Author,
+		"language":      submission.Language,
+		"code":          submission.SourceCode,
+		"status":        submission.Status,
+		"cpu_time":      submission.CPUTime,
+		"memory":        submission.Memory,
+		"score":         submission.Score,
+		"wrong":         wrong,
+		"testcase":      testcase,
+	})
 }
 
 // GetProblemsByTag 讀取屬於該 tag 的題目
@@ -477,7 +534,11 @@ func CreateSubmission(c *gin.Context) {
 // UpdateSubmissionJudgeResult update submission judge result
 func UpdateSubmissionJudgeResult(c *gin.Context) {
 	var submissionID uint
+	var language, code string
+	var status int
+	var err error
 	var data models.SubmissionResult
+	var styleTask styleservice.StyleTask
 
 	if ID, err := strconv.Atoi(c.Params.ByName("id")); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -494,7 +555,59 @@ func UpdateSubmissionJudgeResult(c *gin.Context) {
 		return
 	}
 	// fmt.Printf("%+v\n", data)
-	if err := models.UpdateSubmissionJudgeResult(submissionID, &data); err != nil {
+	if language, code, status, err = models.UpdateSubmissionJudgeResult(submissionID, &data); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "系統錯誤",
+			"error":   err.Error(),
+		})
+		return
+	}
+
+	styleTask.Language = language
+	styleTask.SourceCode = code
+	styleTask.SubmissionID = submissionID
+
+	if err = styleTask.Validate(); err == nil && status == 0 {
+		styleTask.Run()
+	} else {
+		var result models.StyleResult
+
+		if status == 0 {
+			result.Score = "10.00"
+		} else {
+			result.Score = "0.00"
+		}
+
+		models.UpdateSubmissionStyleResult(submissionID, &result)
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "更新成功",
+	})
+}
+
+// UpdateSubmissionStyleResult update submission style result
+func UpdateSubmissionStyleResult(c *gin.Context) {
+	var submissionID uint
+	var data models.StyleResult
+
+	if ID, err := strconv.Atoi(c.Params.ByName("id")); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "系統錯誤",
+		})
+	} else {
+		submissionID = uint(ID)
+	}
+
+	if err := c.BindJSON(&data); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "未按照格式填寫或未使用json",
+			"error":   err.Error(),
+		})
+		return
+	}
+	// fmt.Printf("%+v\n", data)
+	if err := models.UpdateSubmissionStyleResult(submissionID, &data); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": "系統錯誤",
 			"error":   err.Error(),

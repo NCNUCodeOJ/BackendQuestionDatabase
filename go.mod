@@ -5,7 +5,7 @@ go 1.16
 require (
 	github.com/appleboy/gin-jwt/v2 v2.7.0
 	github.com/appleboy/gofight/v2 v2.1.2
-	github.com/buger/jsonparser v1.1.1 // indirect
+	github.com/buger/jsonparser v1.1.1 
 	github.com/gin-gonic/gin v1.7.7
 	github.com/joho/godotenv v1.4.0
 	github.com/rabbitmq/amqp091-go v1.2.0

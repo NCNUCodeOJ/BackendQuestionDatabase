@@ -4,8 +4,10 @@ import (
 	"encoding/json"
 	"errors"
 	"log"
+	"os"
 
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 
@@ -39,10 +41,18 @@ func failOnError(err error, msg string) {
 // Setup connect rabbitmq
 func Setup() {
 	var err error
+
 	if gin.Mode() == "test" {
 		return
 	}
-	conn, err = amqp.Dial("amqp://guest:guest@10.211.55.23:5672/")
+	if gin.Mode() == "debug" {
+		err = godotenv.Load()
+		if err != nil {
+			log.Println("Error loading .env file")
+		}
+	}
+
+	conn, err = amqp.Dial(os.Getenv("RABBITMQ_HOST"))
 	failOnError(err, "Failed to connect to RabbitMQ")
 	channel, err = conn.Channel()
 	failOnError(err, "Failed to open a channel")

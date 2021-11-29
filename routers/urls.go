@@ -71,7 +71,9 @@ func SetupRouter() *gin.Engine {
 	}
 	submission := r.Group(baseURL + "/submission")
 	{
-		submission.PATCH("/:id/judge", views.UpdateSubmissionJudgeResult) // 更新 submission
+		submission.PATCH("/:id/judge", views.UpdateSubmissionJudgeResult) // 更新 submission judge result
+		submission.PATCH("/:id/style", views.UpdateSubmissionStyleResult) // 更新 submission style result
+		submission.GET("/:id", views.GetSubmissionByID)                   // 取得 submission
 	}
 	r.NoRoute(func(c *gin.Context) {
 		c.JSON(404, gin.H{"message": "Page not found"})

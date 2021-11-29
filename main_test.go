@@ -14,6 +14,7 @@ import (
 	"github.com/NCNUCodeOJ/BackendQuestionDatabase/judgeservice"
 	"github.com/NCNUCodeOJ/BackendQuestionDatabase/models"
 	router "github.com/NCNUCodeOJ/BackendQuestionDatabase/routers"
+	"github.com/NCNUCodeOJ/BackendQuestionDatabase/styleservice"
 	"github.com/appleboy/gofight/v2"
 	"github.com/buger/jsonparser"
 	"github.com/gin-gonic/gin"
@@ -22,12 +23,13 @@ import (
 
 // cspell:disable-next-line
 var token = "Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6ZmFsc2UsImV4cCI6NDc5MTA4MjEyMywiaWQiOiI3MTI0MTMxNTQxOTcxMTA3ODYiLCJvcmlnX2lhdCI6MTYzNzQ4MjEyMywidXNlcm5hbWUiOiJ0ZXN0X3VzZXIifQ.pznOSok8X7qv6FSIihJnma_zEy70TerzOs0QDZOq_4RPYOKSEOOYTZ9-VLm2P9XRldS17-7QrLFwjjfXyCodtA"
-var problem1ID, submission1ID, submission2ID, submission3ID int
+var problem1ID, submission1ID, submission2ID, submission3ID, submission4ID, submission5ID, submission6ID int
 
 func init() {
 	gin.SetMode(gin.TestMode)
 	models.Setup()
 	judgeservice.Setup()
+	styleservice.Setup()
 }
 
 type Problem struct {
@@ -251,6 +253,51 @@ func TestCreateSubmission(t *testing.T) {
 			submission3ID = int(id)
 			assert.Equal(t, http.StatusCreated, r.Code)
 		})
+	r.POST("/api/v1/problem/"+strconv.Itoa(problem1ID)+"/submission").
+		SetHeader(gofight.H{
+			"Authorization": token,
+		}).
+		SetJSON(gofight.D{
+			"source_code": "a, b = map(int,input().split())\nprint(a+b)",
+			"language":    "python3",
+		}).
+		Run(router.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+			data := []byte(r.Body.String())
+
+			id, _ := (jsonparser.GetInt(data, "submission_id"))
+			submission4ID = int(id)
+			assert.Equal(t, http.StatusCreated, r.Code)
+		})
+	r.POST("/api/v1/problem/"+strconv.Itoa(problem1ID)+"/submission").
+		SetHeader(gofight.H{
+			"Authorization": token,
+		}).
+		SetJSON(gofight.D{
+			"source_code": "a, b = map(int,input().split())\nprint(a+b)",
+			"language":    "python3",
+		}).
+		Run(router.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+			data := []byte(r.Body.String())
+
+			id, _ := (jsonparser.GetInt(data, "submission_id"))
+			submission5ID = int(id)
+			assert.Equal(t, http.StatusCreated, r.Code)
+		})
+	r.POST("/api/v1/problem/"+strconv.Itoa(problem1ID)+"/submission").
+		SetHeader(gofight.H{
+			"Authorization": token,
+		}).
+		SetJSON(gofight.D{
+			"source_code": "a, b = map(int,input().split())\nprint(a+b)",
+			"language":    "python3",
+		}).
+		Run(router.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+			data := []byte(r.Body.String())
+
+			id, _ := (jsonparser.GetInt(data, "submission_id"))
+			submission6ID = int(id)
+			assert.Equal(t, http.StatusCreated, r.Code)
+		})
 }
 
 func TestUpdateSubmissionJudgeResult(t *testing.T) {
@@ -288,13 +335,15 @@ func TestUpdateSubmissionJudgeResult(t *testing.T) {
 		Run(router.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			assert.Equal(t, http.StatusOK, r.Code)
 		})
-	results = append(results, gofight.D{
-		"cpu_time":  9,
-		"real_time": 21,
-		"memory":    8835072,
-		"result":    -1,
-		"test_case": 2,
-	})
+
+	r.PATCH("/api/v1/submission/"+strconv.Itoa(submission5ID)+"/judge").
+		SetJSON(gofight.D{
+			"compile_error": 0,
+			"results":       results,
+		}).
+		Run(router.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+			assert.Equal(t, http.StatusOK, r.Code)
+		})
 
 	r.PATCH("/api/v1/submission/"+strconv.Itoa(submission3ID)+"/judge").
 		SetJSON(gofight.D{
@@ -303,6 +352,240 @@ func TestUpdateSubmissionJudgeResult(t *testing.T) {
 		}).
 		Run(router.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			assert.Equal(t, http.StatusOK, r.Code)
+		})
+
+	results = append(results, gofight.D{
+		"cpu_time":  9,
+		"real_time": 21,
+		"memory":    8835072,
+		"result":    -1,
+		"test_case": 2,
+	})
+
+	r.PATCH("/api/v1/submission/"+strconv.Itoa(submission4ID)+"/judge").
+		SetJSON(gofight.D{
+			"compile_error": 0,
+			"results":       results,
+		}).
+		Run(router.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+			assert.Equal(t, http.StatusOK, r.Code)
+		})
+}
+
+func TestUpdateSubmissionStyleResult(t *testing.T) {
+	r := gofight.New()
+	var results []gofight.D
+
+	r.PATCH("/api/v1/submission/"+strconv.Itoa(submission2ID)+"/style").
+		SetJSON(gofight.D{
+			"score": "10.00",
+			"wrong": results,
+		}).
+		Run(router.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+			assert.Equal(t, http.StatusOK, r.Code)
+		})
+
+	results = append(results, gofight.D{
+		"line":        "2",
+		"col":         "0",
+		"rule":        "C0304",
+		"description": "https://vald-phoenix.github.io/pylint-errors/plerr/errors/format/C0304",
+	})
+	results = append(results, gofight.D{
+		"line":        "1",
+		"col":         "0",
+		"rule":        "C0304",
+		"description": "https://vald-phoenix.github.io/pylint-errors/plerr/errors/format/C0304",
+	})
+
+	r.PATCH("/api/v1/submission/"+strconv.Itoa(submission3ID)+"/style").
+		SetJSON(gofight.D{
+			"score": "5.12",
+			"wrong": results,
+		}).
+		Run(router.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+			assert.Equal(t, http.StatusOK, r.Code)
+		})
+}
+
+func TestGetSubmission1(t *testing.T) {
+	r := gofight.New()
+
+	r.GET("/api/v1/submission/"+strconv.Itoa(submission1ID)).
+		Run(router.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+			assert.Equal(t, http.StatusOK, r.Code)
+			data := []byte(r.Body.String())
+
+			status, _ := jsonparser.GetInt(data, "status")
+			assert.Equal(t, -2, int(status))
+			score, _ := jsonparser.GetString(data, "score")
+			assert.Equal(t, "0.00", score)
+
+			length := 0
+			jsonparser.ArrayEach(data,
+				func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
+					length++
+				}, "testcase")
+			assert.Equal(t, 0, length)
+
+			length = 0
+			jsonparser.ArrayEach(data,
+				func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
+					length++
+				}, "wrong")
+			assert.Equal(t, 0, length)
+		})
+}
+
+func TestGetSubmission2(t *testing.T) {
+	r := gofight.New()
+
+	r.GET("/api/v1/submission/"+strconv.Itoa(submission2ID)).
+		Run(router.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+			assert.Equal(t, http.StatusOK, r.Code)
+			data := []byte(r.Body.String())
+
+			status, _ := jsonparser.GetInt(data, "status")
+			assert.Equal(t, 0, int(status))
+			score, _ := jsonparser.GetString(data, "score")
+			assert.Equal(t, "10.00", score)
+
+			length := 0
+			jsonparser.ArrayEach(data,
+				func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
+					length++
+				}, "testcase")
+			assert.Equal(t, 2, length)
+
+			length = 0
+			jsonparser.ArrayEach(data,
+				func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
+					length++
+				}, "wrong")
+			assert.Equal(t, 0, length)
+		})
+}
+
+func TestGetSubmission3(t *testing.T) {
+	r := gofight.New()
+
+	r.GET("/api/v1/submission/"+strconv.Itoa(submission3ID)).
+		Run(router.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+			assert.Equal(t, http.StatusOK, r.Code)
+			data := []byte(r.Body.String())
+
+			status, _ := jsonparser.GetInt(data, "status")
+			assert.Equal(t, 0, int(status))
+			score, _ := jsonparser.GetString(data, "score")
+			assert.Equal(t, "5.12", score)
+
+			length := 0
+			jsonparser.ArrayEach(data,
+				func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
+					length++
+				}, "testcase")
+			assert.Equal(t, 2, length)
+
+			length = 0
+			jsonparser.ArrayEach(data,
+				func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
+					length++
+				}, "wrong")
+			assert.Equal(t, 2, length)
+		})
+}
+
+func TestGetSubmission4(t *testing.T) {
+	r := gofight.New()
+
+	r.GET("/api/v1/submission/"+strconv.Itoa(submission4ID)).
+		Run(router.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+			assert.Equal(t, http.StatusOK, r.Code)
+			data := []byte(r.Body.String())
+
+			status, _ := jsonparser.GetInt(data, "status")
+			assert.Equal(t, -1, int(status))
+			score, _ := jsonparser.GetString(data, "score")
+			assert.Equal(t, "0.00", score)
+
+			length := 0
+			jsonparser.ArrayEach(data,
+				func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
+					length++
+				}, "testcase")
+			assert.Equal(t, 3, length)
+
+			length = 0
+			jsonparser.ArrayEach(data,
+				func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
+					length++
+				}, "wrong")
+			assert.Equal(t, 0, length)
+		})
+}
+func TestGetSubmission5(t *testing.T) {
+	r := gofight.New()
+
+	r.GET("/api/v1/submission/"+strconv.Itoa(submission5ID)).
+		Run(router.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+			assert.Equal(t, http.StatusOK, r.Code)
+			data := []byte(r.Body.String())
+
+			status, _ := jsonparser.GetInt(data, "status")
+			assert.Equal(t, 0, int(status))
+			score, _ := jsonparser.GetString(data, "score")
+			assert.Equal(t, "", score)
+
+			length := 0
+			jsonparser.ArrayEach(data,
+				func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
+					length++
+				}, "testcase")
+			assert.Equal(t, 2, length)
+
+			length = 0
+			jsonparser.ArrayEach(data,
+				func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
+					length++
+				}, "wrong")
+			assert.Equal(t, 0, length)
+		})
+}
+func TestGetSubmission6(t *testing.T) {
+	r := gofight.New()
+
+	r.GET("/api/v1/submission/"+strconv.Itoa(submission6ID)).
+		Run(router.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+			assert.Equal(t, http.StatusOK, r.Code)
+			data := []byte(r.Body.String())
+
+			status, _ := jsonparser.GetInt(data, "status")
+			assert.Equal(t, 0, int(status))
+			score, _ := jsonparser.GetString(data, "score")
+			assert.Equal(t, "", score)
+
+			length := 0
+			jsonparser.ArrayEach(data,
+				func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
+					length++
+				}, "testcase")
+			assert.Equal(t, 0, length)
+
+			length = 0
+			jsonparser.ArrayEach(data,
+				func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
+					length++
+				}, "wrong")
+			assert.Equal(t, 0, length)
+		})
+}
+
+func TestGetSubmissionNotFound(t *testing.T) {
+	r := gofight.New()
+
+	r.GET("/api/v1/submission/"+strconv.Itoa(100)).
+		Run(router.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+			assert.Equal(t, http.StatusNotFound, r.Code)
 		})
 }
 

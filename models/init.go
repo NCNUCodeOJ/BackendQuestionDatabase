@@ -52,6 +52,7 @@ func AutoMigrateAll() {
 	DB.AutoMigrate(&Tag2Problem{})
 	DB.AutoMigrate(&Submission{})
 	DB.AutoMigrate(&SubTask{})
+	DB.AutoMigrate(&Wrong{})
 }
 
 //Ping ping a database
