@@ -1,7 +1,7 @@
 # build stage
 FROM golang:1.16-alpine AS build-env
 COPY . /src
-RUN cd /src && go build -o app
+RUN apk add build-base && cd /src && go build -o app
 
 # final stage
 FROM alpine:3
