@@ -1,11 +1,17 @@
 package models
 
-import "gorm.io/gorm"
+import (
+	"time"
+
+	"gorm.io/gorm"
+)
 
 // Tag Database
 type Tag struct {
-	gorm.Model
-	Name string `gorm:"type:varchar(20) NOT NULL;"`
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	DeletedAt gorm.DeletedAt `gorm:"index"`
+	Name      string         `gorm:"type:varchar(20) NOT NULL;primarykey"`
 }
 
 //AddTag 創建 tag
@@ -19,10 +25,5 @@ func GetTagByName(name string) (tag Tag, err error) {
 	if err = DB.Where(&Tag{Name: name}).First(&tag).Error; err != nil {
 		return Tag{}, err
 	}
-	return
-}
-
-func getTagByID(id uint) (tag Tag, err error) {
-	err = DB.First(&tag, id).Error
 	return
 }

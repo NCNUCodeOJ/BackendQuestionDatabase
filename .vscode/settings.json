@@ -1,11 +1,15 @@
 {
     "cSpell.words": [
+        "amqp",
         "CAROOT",
         "DBNAME",
         "godotenv",
+        "gofight",
         "gonic",
         "gorm",
         "joho",
-        "NCNUOJ"
+        "NCNUOJ",
+        "rabbitmq",
+        "tidwall"
     ]
 }

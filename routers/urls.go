@@ -56,12 +56,22 @@ func SetupRouter() *gin.Engine {
 	baseURL := "api/v1"
 	r := gin.Default()
 	r.GET("/ping", views.Pong)
+	r.MaxMultipartMemory = 8 << 20 // 8 MiB
 
 	problem := r.Group(baseURL + "/problem")
 	problem.Use(authMiddleware.MiddlewareFunc())
 	problem.Use(getUserID())
 	{
-		problem.POST("", views.CreateProblem) // 創建題目
+		// problem.GET("/tag/:tagName", views.GetProblemsByTag) // 查詢 該 tag 所有 problems
+		problem.POST("", views.CreateProblem)                      // 創建題目
+		problem.GET("/:id", views.GetProblemByID)                  // 取得題目
+		problem.PATCH("/:id", views.EditProblem)                   // 編輯題目
+		problem.POST("/:id/testcase", views.UploadProblemTestCase) // 上傳題目測試 test case
+		problem.POST("/:id/submission", views.CreateSubmission)    // 上傳 submission
+	}
+	submission := r.Group(baseURL + "/submission")
+	{
+		submission.PATCH("/:id/judge", views.UpdateSubmissionJudgeResult) // 更新 submission
 	}
 	r.NoRoute(func(c *gin.Context) {
 		c.JSON(404, gin.H{"message": "Page not found"})

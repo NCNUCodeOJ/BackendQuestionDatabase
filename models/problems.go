@@ -9,6 +9,7 @@ type Problem struct {
 	Description       string `gorm:"type:text;"`
 	InputDescription  string `gorm:"type:text;"`
 	OutputDescription string `gorm:"type:text"`
+	ProgramName       string `gorm:"type:text"`
 	Author            uint   `gorm:"NOT NULL;"`
 	MemoryLimit       uint   `gorm:"NOT NULL;"`
 	CPUTime           uint   `gorm:"NOT NULL;"`
