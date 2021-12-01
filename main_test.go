@@ -208,7 +208,7 @@ func TestUploadProblemFile(t *testing.T) {
 
 func TestCreateSubmission(t *testing.T) {
 	r := gofight.New()
-	r.POST("/api/v1/problem/"+strconv.Itoa(problem1ID)+"/submission").
+	r.POST("/api/private/v1/problem/"+strconv.Itoa(problem1ID)+"/submission").
 		SetHeader(gofight.H{
 			"Authorization": token,
 		}).
@@ -223,7 +223,7 @@ func TestCreateSubmission(t *testing.T) {
 			submission1ID = int(id)
 			assert.Equal(t, http.StatusCreated, r.Code)
 		})
-	r.POST("/api/v1/problem/"+strconv.Itoa(problem1ID)+"/submission").
+	r.POST("/api/private/v1/problem/"+strconv.Itoa(problem1ID)+"/submission").
 		SetHeader(gofight.H{
 			"Authorization": token,
 		}).
@@ -238,7 +238,7 @@ func TestCreateSubmission(t *testing.T) {
 			submission2ID = int(id)
 			assert.Equal(t, http.StatusCreated, r.Code)
 		})
-	r.POST("/api/v1/problem/"+strconv.Itoa(problem1ID)+"/submission").
+	r.POST("/api/private/v1/problem/"+strconv.Itoa(problem1ID)+"/submission").
 		SetHeader(gofight.H{
 			"Authorization": token,
 		}).
@@ -253,7 +253,7 @@ func TestCreateSubmission(t *testing.T) {
 			submission3ID = int(id)
 			assert.Equal(t, http.StatusCreated, r.Code)
 		})
-	r.POST("/api/v1/problem/"+strconv.Itoa(problem1ID)+"/submission").
+	r.POST("/api/private/v1/problem/"+strconv.Itoa(problem1ID)+"/submission").
 		SetHeader(gofight.H{
 			"Authorization": token,
 		}).
@@ -268,7 +268,7 @@ func TestCreateSubmission(t *testing.T) {
 			submission4ID = int(id)
 			assert.Equal(t, http.StatusCreated, r.Code)
 		})
-	r.POST("/api/v1/problem/"+strconv.Itoa(problem1ID)+"/submission").
+	r.POST("/api/private/v1/problem/"+strconv.Itoa(problem1ID)+"/submission").
 		SetHeader(gofight.H{
 			"Authorization": token,
 		}).
@@ -283,7 +283,7 @@ func TestCreateSubmission(t *testing.T) {
 			submission5ID = int(id)
 			assert.Equal(t, http.StatusCreated, r.Code)
 		})
-	r.POST("/api/v1/problem/"+strconv.Itoa(problem1ID)+"/submission").
+	r.POST("/api/private/v1/problem/"+strconv.Itoa(problem1ID)+"/submission").
 		SetHeader(gofight.H{
 			"Authorization": token,
 		}).
@@ -304,7 +304,7 @@ func TestUpdateSubmissionJudgeResult(t *testing.T) {
 	r := gofight.New()
 	var results []gofight.D
 
-	r.PATCH("/api/v1/submission/"+strconv.Itoa(submission1ID)+"/judge").
+	r.PATCH("/api/private/v1/submission/"+strconv.Itoa(submission1ID)+"/judge").
 		SetJSON(gofight.D{
 			"compile_error": 1,
 			"results":       results,
@@ -327,7 +327,7 @@ func TestUpdateSubmissionJudgeResult(t *testing.T) {
 		"test_case": 2,
 	})
 
-	r.PATCH("/api/v1/submission/"+strconv.Itoa(submission2ID)+"/judge").
+	r.PATCH("/api/private/v1/submission/"+strconv.Itoa(submission2ID)+"/judge").
 		SetJSON(gofight.D{
 			"compile_error": 0,
 			"results":       results,
@@ -336,7 +336,7 @@ func TestUpdateSubmissionJudgeResult(t *testing.T) {
 			assert.Equal(t, http.StatusOK, r.Code)
 		})
 
-	r.PATCH("/api/v1/submission/"+strconv.Itoa(submission5ID)+"/judge").
+	r.PATCH("/api/private/v1/submission/"+strconv.Itoa(submission5ID)+"/judge").
 		SetJSON(gofight.D{
 			"compile_error": 0,
 			"results":       results,
@@ -345,7 +345,7 @@ func TestUpdateSubmissionJudgeResult(t *testing.T) {
 			assert.Equal(t, http.StatusOK, r.Code)
 		})
 
-	r.PATCH("/api/v1/submission/"+strconv.Itoa(submission3ID)+"/judge").
+	r.PATCH("/api/private/v1/submission/"+strconv.Itoa(submission3ID)+"/judge").
 		SetJSON(gofight.D{
 			"compile_error": 0,
 			"results":       results,
@@ -362,7 +362,7 @@ func TestUpdateSubmissionJudgeResult(t *testing.T) {
 		"test_case": 2,
 	})
 
-	r.PATCH("/api/v1/submission/"+strconv.Itoa(submission4ID)+"/judge").
+	r.PATCH("/api/private/v1/submission/"+strconv.Itoa(submission4ID)+"/judge").
 		SetJSON(gofight.D{
 			"compile_error": 0,
 			"results":       results,
@@ -376,7 +376,7 @@ func TestUpdateSubmissionStyleResult(t *testing.T) {
 	r := gofight.New()
 	var results []gofight.D
 
-	r.PATCH("/api/v1/submission/"+strconv.Itoa(submission2ID)+"/style").
+	r.PATCH("/api/private/v1/submission/"+strconv.Itoa(submission2ID)+"/style").
 		SetJSON(gofight.D{
 			"score": "10.00",
 			"wrong": results,
@@ -398,7 +398,7 @@ func TestUpdateSubmissionStyleResult(t *testing.T) {
 		"description": "https://vald-phoenix.github.io/pylint-errors/plerr/errors/format/C0304",
 	})
 
-	r.PATCH("/api/v1/submission/"+strconv.Itoa(submission3ID)+"/style").
+	r.PATCH("/api/private/v1/submission/"+strconv.Itoa(submission3ID)+"/style").
 		SetJSON(gofight.D{
 			"score": "5.12",
 			"wrong": results,
@@ -411,7 +411,7 @@ func TestUpdateSubmissionStyleResult(t *testing.T) {
 func TestGetSubmission1(t *testing.T) {
 	r := gofight.New()
 
-	r.GET("/api/v1/submission/"+strconv.Itoa(submission1ID)).
+	r.GET("/api/private/v1/submission/"+strconv.Itoa(submission1ID)).
 		Run(router.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			assert.Equal(t, http.StatusOK, r.Code)
 			data := []byte(r.Body.String())
@@ -440,7 +440,7 @@ func TestGetSubmission1(t *testing.T) {
 func TestGetSubmission2(t *testing.T) {
 	r := gofight.New()
 
-	r.GET("/api/v1/submission/"+strconv.Itoa(submission2ID)).
+	r.GET("/api/private/v1/submission/"+strconv.Itoa(submission2ID)).
 		Run(router.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			assert.Equal(t, http.StatusOK, r.Code)
 			data := []byte(r.Body.String())
@@ -469,7 +469,7 @@ func TestGetSubmission2(t *testing.T) {
 func TestGetSubmission3(t *testing.T) {
 	r := gofight.New()
 
-	r.GET("/api/v1/submission/"+strconv.Itoa(submission3ID)).
+	r.GET("/api/private/v1/submission/"+strconv.Itoa(submission3ID)).
 		Run(router.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			assert.Equal(t, http.StatusOK, r.Code)
 			data := []byte(r.Body.String())
@@ -498,7 +498,7 @@ func TestGetSubmission3(t *testing.T) {
 func TestGetSubmission4(t *testing.T) {
 	r := gofight.New()
 
-	r.GET("/api/v1/submission/"+strconv.Itoa(submission4ID)).
+	r.GET("/api/private/v1/submission/"+strconv.Itoa(submission4ID)).
 		Run(router.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			assert.Equal(t, http.StatusOK, r.Code)
 			data := []byte(r.Body.String())
@@ -526,7 +526,7 @@ func TestGetSubmission4(t *testing.T) {
 func TestGetSubmission5(t *testing.T) {
 	r := gofight.New()
 
-	r.GET("/api/v1/submission/"+strconv.Itoa(submission5ID)).
+	r.GET("/api/private/v1/submission/"+strconv.Itoa(submission5ID)).
 		Run(router.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			assert.Equal(t, http.StatusOK, r.Code)
 			data := []byte(r.Body.String())
@@ -554,7 +554,7 @@ func TestGetSubmission5(t *testing.T) {
 func TestGetSubmission6(t *testing.T) {
 	r := gofight.New()
 
-	r.GET("/api/v1/submission/"+strconv.Itoa(submission6ID)).
+	r.GET("/api/private/v1/submission/"+strconv.Itoa(submission6ID)).
 		Run(router.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			assert.Equal(t, http.StatusOK, r.Code)
 			data := []byte(r.Body.String())
@@ -583,7 +583,7 @@ func TestGetSubmission6(t *testing.T) {
 func TestGetSubmissionNotFound(t *testing.T) {
 	r := gofight.New()
 
-	r.GET("/api/v1/submission/"+strconv.Itoa(100)).
+	r.GET("/api/private/v1/submission/"+strconv.Itoa(100)).
 		Run(router.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			assert.Equal(t, http.StatusNotFound, r.Code)
 		})

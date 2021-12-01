@@ -54,6 +54,7 @@ func SetupRouter() *gin.Engine {
 	}
 
 	baseURL := "api/v1"
+	privateURL := "api/private/v1"
 	r := gin.Default()
 	r.GET("/ping", views.Pong)
 	r.MaxMultipartMemory = 8 << 20 // 8 MiB
@@ -67,9 +68,15 @@ func SetupRouter() *gin.Engine {
 		problem.GET("/:id", views.GetProblemByID)                  // 取得題目
 		problem.PATCH("/:id", views.EditProblem)                   // 編輯題目
 		problem.POST("/:id/testcase", views.UploadProblemTestCase) // 上傳題目測試 test case
-		problem.POST("/:id/submission", views.CreateSubmission)    // 上傳 submission
+
 	}
-	submission := r.Group(baseURL + "/submission")
+	privateProblem := r.Group(privateURL + "/problem")
+	privateProblem.Use(authMiddleware.MiddlewareFunc())
+	privateProblem.Use(getUserID())
+	{
+		privateProblem.POST("/:id/submission", views.CreateSubmission) // 上傳 submission
+	}
+	submission := r.Group(privateURL + "/submission")
 	{
 		submission.PATCH("/:id/judge", views.UpdateSubmissionJudgeResult) // 更新 submission judge result
 		submission.PATCH("/:id/style", views.UpdateSubmissionStyleResult) // 更新 submission style result
