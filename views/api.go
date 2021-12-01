@@ -171,7 +171,7 @@ func GetSubmissionByID(c *gin.Context) {
 			"cpu_time":  t.CPUTime,
 			"memory":    t.Memory,
 			"status":    t.Status,
-			"test_case": t.TestCaseNumber,
+			"test_case": t.TestCase,
 		})
 	}
 

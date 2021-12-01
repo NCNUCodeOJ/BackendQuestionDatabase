@@ -317,14 +317,14 @@ func TestUpdateSubmissionJudgeResult(t *testing.T) {
 		"real_time": 19,
 		"memory":    8826880,
 		"result":    0,
-		"test_case": 1,
+		"test_case": "1",
 	})
 	results = append(results, gofight.D{
 		"cpu_time":  9,
 		"real_time": 21,
 		"memory":    8835072,
 		"result":    0,
-		"test_case": 2,
+		"test_case": "2",
 	})
 
 	r.PATCH("/api/private/v1/submission/"+strconv.Itoa(submission2ID)+"/judge").
@@ -359,7 +359,7 @@ func TestUpdateSubmissionJudgeResult(t *testing.T) {
 		"real_time": 21,
 		"memory":    8835072,
 		"result":    -1,
-		"test_case": 2,
+		"test_case": "2",
 	})
 
 	r.PATCH("/api/private/v1/submission/"+strconv.Itoa(submission4ID)+"/judge").

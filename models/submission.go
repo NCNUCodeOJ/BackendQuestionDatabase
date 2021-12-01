@@ -23,11 +23,11 @@ type Submission struct {
 // SubTask 子任務
 type SubTask struct {
 	gorm.Model
-	SubmissionID   uint `gorm:"NOT NULL;"`
-	TestCaseNumber uint `gorm:"NOT NULL;"`
-	CPUTime        uint `gorm:"NOT NULL"`
-	Memory         uint `gorm:"NOT NULL"`
-	Status         int  `gorm:"NOT NULL"`
+	SubmissionID uint   `gorm:"NOT NULL;"`
+	TestCase     string `gorm:"type:text;NOT NULL;"`
+	CPUTime      uint   `gorm:"NOT NULL"`
+	Memory       uint   `gorm:"NOT NULL"`
+	Status       int    `gorm:"NOT NULL"`
 }
 
 // Wrong style wrong
@@ -61,10 +61,10 @@ type wrongResultsTemplate struct {
 }
 
 type subTaskResult struct {
-	CPUTime        uint `json:"real_time"`
-	Memory         uint `json:"memory"`
-	Status         int  `json:"result"`
-	TestCaseNumber uint `json:"test_case"`
+	CPUTime  uint   `json:"real_time"`
+	Memory   uint   `json:"memory"`
+	Status   int    `json:"result"`
+	TestCase string `json:"test_case"`
 }
 
 // SubmissionStatus 提交狀態
@@ -120,7 +120,7 @@ func GetSubmissionByID(id uint) (status SubmissionStatus, err error) {
 		subTask.CPUTime = s.CPUTime
 		subTask.Memory = s.Memory
 		subTask.Status = s.Status
-		subTask.TestCaseNumber = s.TestCaseNumber
+		subTask.TestCase = s.TestCase
 		status.TestCase = append(status.TestCase, subTask)
 	}
 
@@ -150,7 +150,7 @@ func UpdateSubmissionJudgeResult(id uint, result *SubmissionResult) (lang, code 
 			subTask.CPUTime = v.CPUTime
 			subTask.Memory = v.Memory
 			subTask.Status = v.Status
-			subTask.TestCaseNumber = v.TestCaseNumber
+			subTask.TestCase = v.TestCase
 			subTask.SubmissionID = id
 			if err = DB.Create(&subTask).Error; err != nil {
 				return
