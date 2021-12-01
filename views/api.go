@@ -542,7 +542,8 @@ func UpdateSubmissionJudgeResult(c *gin.Context) {
 
 	if ID, err := strconv.Atoi(c.Params.ByName("id")); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"message": "系統錯誤",
+			"message": "system error",
+			"error":   err.Error(),
 		})
 	} else {
 		submissionID = uint(ID)
@@ -550,14 +551,15 @@ func UpdateSubmissionJudgeResult(c *gin.Context) {
 
 	if err := c.BindJSON(&data); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"message": "未按照格式填寫或未使用json",
+			"message": "json error",
+			"error":   err.Error(),
 		})
 		return
 	}
 	// fmt.Printf("%+v\n", data)
 	if language, code, status, err = models.UpdateSubmissionJudgeResult(submissionID, &data); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"message": "系統錯誤",
+			"message": "system error",
 			"error":   err.Error(),
 		})
 		return
@@ -582,7 +584,7 @@ func UpdateSubmissionJudgeResult(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"message": "更新成功",
+		"message": "update success",
 	})
 }
 
@@ -593,7 +595,8 @@ func UpdateSubmissionStyleResult(c *gin.Context) {
 
 	if ID, err := strconv.Atoi(c.Params.ByName("id")); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"message": "系統錯誤",
+			"message": "system error",
+			"error":   err.Error(),
 		})
 	} else {
 		submissionID = uint(ID)
@@ -601,7 +604,7 @@ func UpdateSubmissionStyleResult(c *gin.Context) {
 
 	if err := c.BindJSON(&data); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"message": "未按照格式填寫或未使用json",
+			"message": "json error",
 			"error":   err.Error(),
 		})
 		return
@@ -609,13 +612,13 @@ func UpdateSubmissionStyleResult(c *gin.Context) {
 	// fmt.Printf("%+v\n", data)
 	if err := models.UpdateSubmissionStyleResult(submissionID, &data); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"message": "系統錯誤",
+			"message": "system error",
 			"error":   err.Error(),
 		})
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"message": "更新成功",
+		"message": "update success",
 	})
 }

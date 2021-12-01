@@ -7,8 +7,9 @@ import (
 	"os"
 
 	"github.com/gin-gonic/gin"
+	"github.com/isayme/go-amqp-reconnect/rabbitmq"
 	"github.com/joho/godotenv"
-	amqp "github.com/rabbitmq/amqp091-go"
+	"github.com/streadway/amqp"
 )
 
 // JudgeTask is a template for a judge task
@@ -28,8 +29,8 @@ var supportedLanguage = map[string]bool{
 	"java":    true,
 	"python3": true,
 }
-var conn *amqp.Connection
-var channel *amqp.Channel
+var conn *rabbitmq.Connection
+var channel *rabbitmq.Channel
 var queue amqp.Queue
 
 func failOnError(err error, msg string) {
@@ -52,7 +53,7 @@ func Setup() {
 		}
 	}
 
-	conn, err = amqp.Dial(os.Getenv("RABBITMQ_HOST"))
+	conn, err = rabbitmq.Dial(os.Getenv("RABBITMQ_HOST"))
 	failOnError(err, "Failed to connect to RabbitMQ")
 	channel, err = conn.Channel()
 	failOnError(err, "Failed to open a channel")

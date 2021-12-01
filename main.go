@@ -10,8 +10,10 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/NCNUCodeOJ/BackendQuestionDatabase/judgeservice"
 	"github.com/NCNUCodeOJ/BackendQuestionDatabase/models"
 	router "github.com/NCNUCodeOJ/BackendQuestionDatabase/routers"
+	"github.com/NCNUCodeOJ/BackendQuestionDatabase/styleservice"
 	"github.com/gin-gonic/gin"
 )
 
@@ -19,6 +21,10 @@ var srv *http.Server
 
 func start() {
 	models.Setup()
+
+	judgeservice.Setup()
+	styleservice.Setup()
+
 	r := router.SetupRouter()
 	if gin.Mode() == "debug" {
 		srv = &http.Server{
