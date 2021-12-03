@@ -17,7 +17,8 @@ type Submission struct {
 	Status     int    `gorm:"NOT NULL"`
 	CPUTime    uint   `gorm:"NOT NULL"`
 	Memory     uint   `gorm:"NOT NULL"`
-	Score      string `gorm:"type:char(5) NOT NULL"`
+	Score      string `gorm:"type:char(5);NOT NULL"`
+	IsRating   bool   `gorm:"type:boolean;default:false"`
 }
 
 // SubTask 子任務
@@ -180,6 +181,10 @@ func UpdateSubmissionStyleResult(id uint, result *StyleResult) (err error) {
 		return
 	}
 
+	if submission.IsRating == true {
+		return
+	}
+
 	submission.Score = result.Score
 
 	for _, v := range result.WrongResults {
@@ -204,6 +209,9 @@ func UpdateSubmissionStyleResult(id uint, result *StyleResult) (err error) {
 			return
 		}
 	}
+
+	submission.IsRating = true
+
 	err = DB.Save(&submission).Error
 
 	return
