@@ -10,15 +10,16 @@ import (
 // Submission Database - database
 type Submission struct {
 	gorm.Model
-	ProblemID  uint   `gorm:"NOT NULL;"`
-	Author     uint   `gorm:"NOT NULL;"`
-	Language   string `gorm:"type:text;NOT NULL"`
-	SourceCode string `gorm:"type:text;NOT NULL"`
-	Status     int    `gorm:"NOT NULL"`
-	CPUTime    uint   `gorm:"NOT NULL"`
-	Memory     uint   `gorm:"NOT NULL"`
-	Score      string `gorm:"type:char(5);NOT NULL"`
-	IsRating   bool   `gorm:"type:boolean;default:false"`
+	ProblemID     uint   `gorm:"NOT NULL;"`
+	Author        uint   `gorm:"NOT NULL;"`
+	Language      string `gorm:"type:text;NOT NULL"`
+	SourceCode    string `gorm:"type:text;NOT NULL"`
+	Status        int    `gorm:"NOT NULL"`
+	CPUTime       uint   `gorm:"NOT NULL"`
+	Memory        uint   `gorm:"NOT NULL"`
+	Score         string `gorm:"type:char(5);NOT NULL"`
+	IsRating      bool   `gorm:"type:boolean;default:false"`
+	IsStyleRating bool   `gorm:"type:boolean;default:false"`
 }
 
 // SubTask 子任務
@@ -142,6 +143,10 @@ func UpdateSubmissionJudgeResult(id uint, result *SubmissionResult) (lang, code 
 		return
 	}
 
+	if submission.IsRating == true {
+		return
+	}
+
 	if result.CompileError == 1 {
 		submission.Status = -2
 	} else {
@@ -164,6 +169,9 @@ func UpdateSubmissionJudgeResult(id uint, result *SubmissionResult) (lang, code 
 			submission.Memory = pkg.Max(submission.Memory, v.Memory)
 		}
 	}
+
+	submission.IsRating = true
+
 	err = DB.Save(&submission).Error
 
 	lang = submission.Language
@@ -181,7 +189,7 @@ func UpdateSubmissionStyleResult(id uint, result *StyleResult) (err error) {
 		return
 	}
 
-	if submission.IsRating == true {
+	if submission.IsStyleRating == true {
 		return
 	}
 
@@ -210,7 +218,7 @@ func UpdateSubmissionStyleResult(id uint, result *StyleResult) (err error) {
 		}
 	}
 
-	submission.IsRating = true
+	submission.IsStyleRating = true
 
 	err = DB.Save(&submission).Error
 
