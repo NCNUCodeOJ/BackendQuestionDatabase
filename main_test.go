@@ -75,7 +75,7 @@ func TestProblemCreate(t *testing.T) {
 	}`)
 	r := router.SetupRouter()
 	w := httptest.NewRecorder() // 取得 ResponseRecorder 物件
-	req, _ := http.NewRequest("POST", "/api/v1/problem", bytes.NewBuffer(data))
+	req, _ := http.NewRequest("POST", "/api/private/v1/problem", bytes.NewBuffer(data))
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", token)
 	r.ServeHTTP(w, req)
@@ -92,7 +92,7 @@ func TestProblemCreate(t *testing.T) {
 func TestGetProblemByID(t *testing.T) {
 	r := router.SetupRouter()
 	w := httptest.NewRecorder() // 取得 ResponseRecorder 物件
-	req, _ := http.NewRequest("GET", "/api/v1/problem/"+strconv.Itoa(problem1ID), nil)
+	req, _ := http.NewRequest("GET", "/api/private/v1/problem/"+strconv.Itoa(problem1ID), nil)
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", token)
 	r.ServeHTTP(w, req)
@@ -117,7 +117,7 @@ func TestCreateMultipleProblem(t *testing.T) {
 	}`)
 	r := router.SetupRouter()
 	w := httptest.NewRecorder() // 取得 ResponseRecorder 物件
-	req, _ := http.NewRequest("POST", "/api/v1/problem", bytes.NewBuffer(data))
+	req, _ := http.NewRequest("POST", "/api/private/v1/problem", bytes.NewBuffer(data))
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", token)
 	r.ServeHTTP(w, req)
@@ -138,7 +138,7 @@ func TestCreateMultipleProblem(t *testing.T) {
 		"tags_list":          ["難"]
 	}`)
 	w = httptest.NewRecorder() // 取得 ResponseRecorder 物件
-	req, _ = http.NewRequest("POST", "/api/v1/problem", bytes.NewBuffer(data))
+	req, _ = http.NewRequest("POST", "/api/private/v1/problem", bytes.NewBuffer(data))
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", token)
 	r.ServeHTTP(w, req)
@@ -157,7 +157,7 @@ func TestUpdateProblem(t *testing.T) {
 	}`)
 	r := router.SetupRouter()
 	w := httptest.NewRecorder() // 取得 ResponseRecorder 物件
-	req, _ := http.NewRequest("PATCH", "/api/v1/problem/"+strconv.Itoa(problem1ID), bytes.NewBuffer(data))
+	req, _ := http.NewRequest("PATCH", "/api/private/v1/problem/"+strconv.Itoa(problem1ID), bytes.NewBuffer(data))
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", token)
 	r.ServeHTTP(w, req)
@@ -170,7 +170,7 @@ func TestUpdateProblem(t *testing.T) {
 		]
 	}`)
 	w = httptest.NewRecorder() // 取得 ResponseRecorder 物件
-	req, _ = http.NewRequest("PATCH", "/api/v1/problem/"+strconv.Itoa(problem1ID), bytes.NewBuffer(data))
+	req, _ = http.NewRequest("PATCH", "/api/private/v1/problem/"+strconv.Itoa(problem1ID), bytes.NewBuffer(data))
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", token)
 	r.ServeHTTP(w, req)
@@ -179,7 +179,7 @@ func TestUpdateProblem(t *testing.T) {
 
 func TestUploadProblemFile(t *testing.T) {
 	r := gofight.New()
-	r.POST("/api/v1/problem/"+strconv.Itoa(problem1ID)+"/testcase").
+	r.POST("/api/private/v1/problem/"+strconv.Itoa(problem1ID)+"/testcase").
 		SetHeader(gofight.H{
 			"Authorization": token,
 		}).
@@ -192,7 +192,7 @@ func TestUploadProblemFile(t *testing.T) {
 			assert.Equal(t, http.StatusCreated, r.Code)
 		})
 	r = gofight.New()
-	r.POST("/api/v1/problem/"+strconv.Itoa(problem1ID)+"/testcase").
+	r.POST("/api/private/v1/problem/"+strconv.Itoa(problem1ID)+"/testcase").
 		SetHeader(gofight.H{
 			"Authorization": token,
 		}).

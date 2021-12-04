@@ -54,7 +54,6 @@ func SetupRouter() *gin.Engine {
 		log.Fatal("JWT Error:" + err.Error())
 	}
 
-	baseURL := "api/v1"
 	privateURL := "api/private/v1"
 	r := gin.Default()
 
@@ -72,7 +71,7 @@ func SetupRouter() *gin.Engine {
 	r.GET("/ping", views.Pong)
 	r.MaxMultipartMemory = 8 << 20 // 8 MiB
 
-	problem := r.Group(baseURL + "/problem")
+	problem := r.Group(privateURL + "/problem")
 	problem.Use(authMiddleware.MiddlewareFunc())
 	problem.Use(getUserID())
 	{
