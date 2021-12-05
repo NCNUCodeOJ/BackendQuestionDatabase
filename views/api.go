@@ -121,6 +121,7 @@ func GetProblemByID(c *gin.Context) {
 			"memory_limit":       problem.MemoryLimit,
 			"cpu_time":           problem.CPUTime,
 			"layer":              problem.Layer,
+			"has_test_case":      problem.HasTestCase,
 			"samples":            samples,
 			"tags_list":          tags,
 		})
