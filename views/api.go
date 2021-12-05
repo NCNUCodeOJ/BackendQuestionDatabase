@@ -463,7 +463,7 @@ func UploadProblemTestCase(c *gin.Context) {
 			c.JSON(http.StatusInternalServerError, gin.H{
 				"message": "server error",
 			})
-			if needLog {
+			if needLog || gin.Mode() == "test" {
 				log.Println(err.Error())
 			}
 			return
@@ -476,7 +476,7 @@ func UploadProblemTestCase(c *gin.Context) {
 			c.JSON(http.StatusInternalServerError, gin.H{
 				"message": "server error",
 			})
-			if needLog {
+			if needLog || gin.Mode() == "test" {
 				log.Println(err.Error())
 			}
 			return
