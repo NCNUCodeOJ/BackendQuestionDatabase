@@ -8,7 +8,7 @@ FROM alpine:3
 WORKDIR /app
 COPY --from=build-env /src/app /app/app
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
-RUN mkdir /testcases && chown appuser:appgroup /testcases
+RUN mkdir /testcase && chown appuser:appgroup /testcase
 USER appuser
 ENTRYPOINT ./app
 EXPOSE 8080
