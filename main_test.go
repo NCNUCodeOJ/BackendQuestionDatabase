@@ -180,6 +180,15 @@ func TestUpdateProblem(t *testing.T) {
 func TestUploadProblemFile(t *testing.T) {
 	if os.Getenv("gitlab") == "1" {
 		assert.Equal(t, os.Getenv("gitlab"), "1")
+		var problem models.Problem
+		var err error
+		if problem, err = models.GetProblemByID(uint(problem1ID)); err != nil {
+			assert.Equal(t, err, nil)
+		}
+		problem.HasTestCase = true
+		if err = models.UpdateProblem(&problem); err != nil {
+			assert.Equal(t, err, nil)
+		}
 		return
 	}
 	r := gofight.New()
