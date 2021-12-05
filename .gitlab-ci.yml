@@ -8,6 +8,7 @@ test:
   stage: test
   script:
     - mkdir testcase
+    - export gitlab=1
     - go test ./...
 
 deployJob:
