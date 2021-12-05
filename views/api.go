@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"mime/multipart"
 	"net/http"
 	"os"
@@ -380,7 +381,11 @@ func UploadProblemTestCase(c *gin.Context) {
 		})
 		return
 	}
-	defer os.RemoveAll(dir)
+	if needLog {
+		log.Println("dir:", dir)
+	} else {
+		defer os.RemoveAll(dir)
+	}
 
 	filePath = filepath.Join(dir, "case.zip")
 
@@ -436,6 +441,19 @@ func UploadProblemTestCase(c *gin.Context) {
 		testcaseInfo.OutputSize = len(outData)
 		testcaseInfo.OutputMD5 = fmt.Sprintf("%x", md5.Sum([]byte(outData)))
 		testcaseInfo.StrippedOutputMD5 = fmt.Sprintf("%x", md5.Sum([]byte(strings.TrimSpace(outData))))
+
+		if needLog {
+			log.Printf(
+				"%s -> %s",
+				filepath.Join(dir, strconv.Itoa(start)+".in"),
+				filepath.Join(testCasePath, strconv.Itoa(start)+".in"),
+			)
+			log.Printf(
+				"%s -> %s",
+				filepath.Join(dir, strconv.Itoa(start)+".out"),
+				filepath.Join(testCasePath, strconv.Itoa(start)+".out"),
+			)
+		}
 
 		os.Rename(
 			filepath.Join(dir, strconv.Itoa(start)+".in"),

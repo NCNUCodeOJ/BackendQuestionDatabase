@@ -14,6 +14,7 @@ import (
 	"github.com/NCNUCodeOJ/BackendQuestionDatabase/models"
 	router "github.com/NCNUCodeOJ/BackendQuestionDatabase/routers"
 	"github.com/NCNUCodeOJ/BackendQuestionDatabase/styleservice"
+	"github.com/NCNUCodeOJ/BackendQuestionDatabase/views"
 	"github.com/gin-gonic/gin"
 )
 
@@ -24,6 +25,8 @@ func start() {
 
 	judgeservice.Setup()
 	styleservice.Setup()
+
+	views.Setup()
 
 	r := router.SetupRouter()
 	if gin.Mode() == "debug" {
