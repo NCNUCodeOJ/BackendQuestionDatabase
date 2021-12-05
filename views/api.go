@@ -448,8 +448,9 @@ func UploadProblemTestCase(c *gin.Context) {
 	_ = ioutil.WriteFile(infoFilePath, infoFile, 0644)
 
 	c.JSON(http.StatusCreated, gin.H{
-		"message":    "上傳成功",
-		"problem_id": problemID,
+		"message":          "上傳成功",
+		"problem_id":       problemID,
+		"test_case_number": infoData.TestCaseNumber,
 	})
 }
 
