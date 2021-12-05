@@ -9,6 +9,7 @@ WORKDIR /app
 COPY --from=build-env /src/app /app/app
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 USER appuser
+RUN mkdir /testcase
 ENTRYPOINT ./app
 EXPOSE 8080
 HEALTHCHECK --timeout=5s CMD ./app ping
