@@ -1,6 +1,7 @@
 package views
 
 import (
+	"bytes"
 	"crypto/md5"
 	"encoding/json"
 	"fmt"
@@ -514,6 +515,118 @@ func UploadProblemTestCase(c *gin.Context) {
 		"message":          "上傳成功",
 		"problem_id":       problemID,
 		"test_case_number": infoData.TestCaseNumber,
+	})
+}
+
+// GetSourceCodeAndAuthor get source code and author
+func GetSourceCodeAndAuthor(c *gin.Context) {
+	var data struct {
+		SubmissionIDs []string `json:"submission_ids"`
+	}
+
+	if err := c.BindJSON(&data); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "json format error",
+		})
+		return
+	}
+
+	if zero.IsZero(data) {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "data is not complete",
+		})
+		return
+	}
+
+	submissionIDs := make([]uint, len(data.SubmissionIDs))
+	for i, id := range data.SubmissionIDs {
+		tmp, err := strconv.Atoi(id)
+
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"message": "submission id is invalid",
+			})
+		}
+
+		submissionIDs[i] = uint(tmp)
+	}
+
+	submissions, err := models.GetSourceCodeAndAuthor(submissionIDs)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": err.Error(),
+		})
+		return
+	}
+
+	var responseData []gin.H
+
+	url := userHost + privateBaseURL + "/username"
+	var reqBody []byte
+	reqBodyStruct := struct {
+		UserID []string `json:"user_id"`
+	}{}
+
+	for _, submission := range submissions {
+		reqBodyStruct.UserID = append(reqBodyStruct.UserID, strconv.Itoa(int(submission.Author)))
+	}
+
+	reqBody, err = json.Marshal(reqBodyStruct)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": err.Error(),
+		})
+		return
+	}
+	client := &http.Client{}
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(reqBody))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": err.Error(),
+		})
+		return
+	}
+	req.Header.Set("Content-Type", c.GetHeader("Content-Type"))
+
+	userID2username := make(map[uint]string)
+
+	if gin.Mode() != "test" {
+		res, err := client.Do(req)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"message": err.Error(),
+			})
+			return
+		}
+
+		resData := struct {
+			UserList []struct {
+				UserID   uint   `json:"user_id"`
+				UserName string `json:"username"`
+			} `json:"user_list"`
+		}{}
+
+		body, _ := ioutil.ReadAll(res.Body)
+		json.Unmarshal(body, &resData)
+		for _, user := range resData.UserList {
+			userID2username[user.UserID] = user.UserName
+		}
+	}
+
+	for _, submission := range submissions {
+		username := userID2username[submission.Author]
+		if username == "" {
+			username = "Unknown_" + strconv.Itoa(int(submission.Author))
+		}
+		responseData = append(responseData, gin.H{
+			"name":    username,
+			"content": submission.SourceCode,
+		})
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"submission_list": responseData,
 	})
 }
 

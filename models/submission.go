@@ -84,6 +84,18 @@ type SubmissionStatus struct {
 	TestCase     []subTaskResult
 }
 
+// SourceCodeAndAuthor 提交原始碼和作者
+type SourceCodeAndAuthor struct {
+	SourceCode string
+	Author     uint
+}
+
+// GetSourceCodeAndAuthor 獲取提交原始碼和作者
+func GetSourceCodeAndAuthor(submissionIDs []uint) (submissions []SourceCodeAndAuthor, err error) {
+	err = DB.Model(&Submission{}).Where(submissionIDs).Find(&submissions).Error
+	return
+}
+
 // GetSubmissionByID 獲取提交狀態
 func GetSubmissionByID(id uint) (status SubmissionStatus, err error) {
 	var submission Submission

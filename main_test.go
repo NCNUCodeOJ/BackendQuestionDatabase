@@ -602,6 +602,30 @@ func TestGetSubmissionNotFound(t *testing.T) {
 		})
 }
 
+func TestGetSubmissionCode(t *testing.T) {
+	r := gofight.New()
+
+	r.POST("/api/private/v1/submission/code").
+		SetJSON(gofight.D{
+			"submission_ids": []string{
+				strconv.Itoa(submission1ID),
+				strconv.Itoa(submission2ID),
+				strconv.Itoa(submission3ID),
+			},
+		}).
+		Run(router.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+			data := []byte(r.Body.String())
+			length := 0
+
+			jsonparser.ArrayEach(data,
+				func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
+					length++
+				}, "submission_list")
+
+			assert.Equal(t, 3, length)
+			assert.Equal(t, http.StatusOK, r.Code)
+		})
+}
 func TestCleanup(t *testing.T) {
 	e := os.Remove("test.db")
 	if e != nil {

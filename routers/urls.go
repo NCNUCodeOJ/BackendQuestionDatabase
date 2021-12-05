@@ -93,6 +93,7 @@ func SetupRouter() *gin.Engine {
 	}
 	submission := r.Group(privateURL + "/submission")
 	{
+		submission.POST("/code", views.GetSourceCodeAndAuthor)            // 取得 submission code
 		submission.PATCH("/:id/judge", views.UpdateSubmissionJudgeResult) // 更新 submission judge result
 		submission.PATCH("/:id/style", views.UpdateSubmissionStyleResult) // 更新 submission style result
 		submission.GET("/:id", views.GetSubmissionByID)                   // 取得 submission
