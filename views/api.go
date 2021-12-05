@@ -612,6 +612,9 @@ func GetSourceCodeAndAuthor(c *gin.Context) {
 		for _, user := range resData.UserList {
 			userID2username[user.UserID] = user.UserName
 		}
+		if needLog {
+			log.Println(userID2username)
+		}
 	}
 
 	for _, submission := range submissions {
