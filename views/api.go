@@ -375,12 +375,15 @@ func UploadProblemTestCase(c *gin.Context) {
 		return
 	}
 
-	if dir, err = ioutil.TempDir(os.TempDir(), "*"); err != nil {
+	dir = filepath.Join(os.Getenv("TESTCASEDIR"), "tmp_"+strconv.Itoa(id))
+	if err = os.Mkdir(dir, 0700); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": "系統錯誤",
+			"error":   err.Error(),
 		})
 		return
 	}
+
 	if needLog {
 		log.Println("dir:", dir)
 	} else {
