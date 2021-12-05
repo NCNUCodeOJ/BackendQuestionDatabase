@@ -455,14 +455,32 @@ func UploadProblemTestCase(c *gin.Context) {
 			)
 		}
 
-		os.Rename(
+		err = os.Rename(
 			filepath.Join(dir, strconv.Itoa(start)+".in"),
 			filepath.Join(testCasePath, strconv.Itoa(start)+".in"),
 		)
-		os.Rename(
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"message": "server error",
+			})
+			if needLog {
+				log.Println(err.Error())
+			}
+			return
+		}
+		err = os.Rename(
 			filepath.Join(dir, strconv.Itoa(start)+".out"),
 			filepath.Join(testCasePath, strconv.Itoa(start)+".out"),
 		)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"message": "server error",
+			})
+			if needLog {
+				log.Println(err.Error())
+			}
+			return
+		}
 
 		infoData.TestCases[strconv.Itoa(start)] = testcaseInfo
 
