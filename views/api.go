@@ -344,6 +344,7 @@ func EditProblem(c *gin.Context) {
 // UploadProblemTestCase upload problem test case
 func UploadProblemTestCase(c *gin.Context) {
 	var problemID uint
+	var problem models.Problem
 	var err error
 	var id int
 	var file *multipart.FileHeader
@@ -358,6 +359,12 @@ func UploadProblemTestCase(c *gin.Context) {
 	}
 
 	problemID = uint(id)
+	if problem, err = models.GetProblemByID(problemID); err != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"message": "無此題目",
+		})
+		return
+	}
 
 	if file, err = c.FormFile("testcase"); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -445,7 +452,24 @@ func UploadProblemTestCase(c *gin.Context) {
 
 	infoFile, _ := json.MarshalIndent(infoData, "", " ")
 	infoFilePath := filepath.Join(testCasePath, "info")
-	_ = ioutil.WriteFile(infoFilePath, infoFile, 0644)
+	err = ioutil.WriteFile(infoFilePath, infoFile, 0644)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "server error",
+			"error":   err.Error(),
+		})
+		return
+	}
+
+	problem.HasTestCase = true
+
+	if err = models.UpdateProblem(&problem); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "server error",
+		})
+		return
+	}
 
 	c.JSON(http.StatusCreated, gin.H{
 		"message":          "上傳成功",
@@ -476,6 +500,13 @@ func CreateSubmission(c *gin.Context) {
 	if problem, err = models.GetProblemByID(problemID); err != nil {
 		c.JSON(http.StatusNotFound, gin.H{
 			"message": "無此題目",
+		})
+		return
+	}
+
+	if !problem.HasTestCase {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "problem has no test case",
 		})
 		return
 	}

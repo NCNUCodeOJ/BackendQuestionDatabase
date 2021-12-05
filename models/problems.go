@@ -14,6 +14,7 @@ type Problem struct {
 	MemoryLimit       uint   `gorm:"NOT NULL;"`
 	CPUTime           uint   `gorm:"NOT NULL;"`
 	Layer             uint8  `gorm:"NOT NULL;"`
+	HasTestCase       bool   `gorm:"NOT NULL;default:false"`
 }
 
 //AddProblem 創建題目
