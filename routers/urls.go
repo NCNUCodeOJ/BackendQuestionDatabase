@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/NCNUCodeOJ/BackendQuestionDatabase/views"
@@ -59,8 +60,10 @@ func SetupRouter() *gin.Engine {
 
 	// CORS
 	if os.Getenv("FrontendURL") != "" {
+		origins := strings.Split(os.Getenv("FrontendURL"), ",")
+		log.Println("CORS:", origins)
 		r.Use(cors.New(cors.Config{
-			AllowOrigins:     []string{os.Getenv("FrontendURL")},
+			AllowOrigins:     origins,
 			AllowMethods:     []string{"PUT", "PATCH", "POST", "GET", "DELETE"},
 			AllowHeaders:     []string{"Origin, Authorization, Content-Type, Accept"},
 			AllowCredentials: true,
