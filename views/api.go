@@ -11,6 +11,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strconv"
 	"strings"
 
@@ -43,7 +44,21 @@ func CreateProblem(c *gin.Context) {
 
 	replace.Replace(&problem, &data)
 	problem.Author = userID
-
+	// check program name
+	isValidProgramName := regexp.MustCompile(`^[a-zA-Z0-9]+$`).MatchString
+	if !isValidProgramName(problem.ProgramName) {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "ProgramName can only contain letters and numbers",
+		})
+		return
+	}
+	// check memorylimit
+	if problem.MemoryLimit > 512 {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "Out of Max memorylimit",
+		})
+		return
+	}
 	if err := models.AddProblem(&problem); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": "題目創建失敗",
@@ -260,6 +275,21 @@ func EditProblem(c *gin.Context) {
 	}
 
 	replace.Replace(&problem, &data)
+	// check program name
+	isValidProgramName := regexp.MustCompile(`^[a-zA-Z0-9]+$`).MatchString
+	if !isValidProgramName(problem.ProgramName) {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "ProgramName can only contain letters and numbers",
+		})
+		return
+	}
+	// check memorylimit
+	if problem.MemoryLimit > 512 {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "Out of Max memorylimit",
+		})
+		return
+	}
 	models.UpdateProblem(&problem)
 
 	if data.TagsList != nil {
