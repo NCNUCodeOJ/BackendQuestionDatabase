@@ -53,7 +53,7 @@ func CreateProblem(c *gin.Context) {
 		return
 	}
 	// check memorylimit
-	if problem.MemoryLimit > 512 {
+	if problem.MemoryLimit > 512*1024*1024 {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "Out of Max memorylimit",
 		})
@@ -284,7 +284,7 @@ func EditProblem(c *gin.Context) {
 		return
 	}
 	// check memorylimit
-	if problem.MemoryLimit > 512 {
+	if problem.MemoryLimit > 512*1024*1024 {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "Out of Max memorylimit",
 		})
