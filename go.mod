@@ -7,7 +7,7 @@ require (
 	github.com/appleboy/gofight/v2 v2.1.2
 	github.com/buger/jsonparser v1.1.1
 	github.com/gin-contrib/cors v1.3.1
-	github.com/gin-gonic/gin v1.7.7
+	github.com/gin-gonic/gin v1.9.0
 	github.com/isayme/go-amqp-reconnect v0.0.0-20210303120416-fc811b0bcda2
 	github.com/joho/godotenv v1.4.0
 	github.com/streadway/amqp v1.0.0
